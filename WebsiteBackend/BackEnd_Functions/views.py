@@ -9,7 +9,7 @@ from asgiref.sync import async_to_sync, sync_to_async
 async def make_async_request(payload):
     async with aiohttp.ClientSession() as session:
         headers = {'X-CSRFToken': 'Nave_Abergel'}  # Include the CSRF cookie in the headers
-        async with session.get('http://127.0.0.1:8080', json=payload, headers=headers) as response:
+        async with session.post('http://127.0.0.1:8080', json=payload, headers=headers) as response:
             if response.status == 200:
                 response_data = await response.json()
                 response_data['status'] = 'success'
@@ -39,11 +39,8 @@ async def register_view(request):
 
         # Construct the request payload
         payload = {
-            'name': name,
-            'email': email,
-            'password': password,
             'passport': passport,
-            'trustNode': trustNode
+            'trustNode': 'http://127.0.0.1:8040'
         }
 
         response = await make_async_request(payload)

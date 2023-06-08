@@ -9,6 +9,7 @@ django-cors-headers = "*"
 djangorestframework = "*"
 flask = "*"
 aiohttp = "*"
+cryptography = "*"
 
 [dev-packages]
 

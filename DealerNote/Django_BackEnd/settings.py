@@ -29,7 +29,8 @@ ALLOWED_HOSTS = []
 
 CORS_ORIGIN_ALLOW_ALL = True
 
-# Application definition
+# Application definition'
+PORT = 8060
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -40,7 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
-    'Django_BackEnd'
+    'DelaerNode_Functions'
 
 ]
 
