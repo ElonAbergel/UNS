@@ -9,7 +9,11 @@ function Dashboard() {
 				</h1>
 
 				<div className="flex">
-					<div></div>
+					<div className="w-1/4 p-4 bg-gray-200">
+						{/* Sidebar content */}
+						<h2 className="text-xl font-bold mb-2">Chat Sidebar</h2>
+						{/* Add any additional sidebar content here */}
+					</div>
 					<div className="w-3/4 p-4 bg-white">
 						{/* Chat messages */}
 						<div className="space-y-4">
