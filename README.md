@@ -13,3 +13,11 @@ UNS is designed to address the limitations of traditional centralized networks b
 This demo project features a website called Ywitter, which serves as a social media platform running on the UNS network. Ywitter demonstrates the functionality of UNS by enabling secure communication and interaction between users. The demo will showcase the Sybil Authentication mechanism implemented by UNS.
 
 To experience the UNS demo, please visit XXX
+
+## To start
+
+1) start fronend- npm run dev
+2) start WebsiteBackend for website- python manage.py runserver 8000
+3) start TrustNodeWebsite - python manage.py runserver 8080
+4) start TrustNodeUser - python manage.py runserver 8040
+5)  start DealerNote - python manage.py runserver 8040
