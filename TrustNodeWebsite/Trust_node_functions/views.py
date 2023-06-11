@@ -12,7 +12,7 @@ from .models import User
 @async_to_sync
 async def Trust_Node_Main(request):
     """
-    1) interact with dealer so you can get the two private keys
+    1) interact with dealer so you can get the two private keys and public
     2)
     """
     if request.method == 'POST':

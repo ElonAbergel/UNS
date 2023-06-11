@@ -11,6 +11,7 @@ flask = "*"
 aiohttp = "*"
 cryptography = "*"
 pycrypto = "*"
+pycryptodome = "*"
 
 [dev-packages]
 
