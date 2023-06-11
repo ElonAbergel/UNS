@@ -28,6 +28,7 @@ async def Trust_Node_Main(request):
         else:
             """We need to create all keys for the trust node and the user """
             payload = {
+                'passport': passport_number,
                 'message': "Dealer give me private key for me p and the public key for user trust node "
             }
             async with aiohttp.ClientSession() as session:
@@ -49,4 +50,6 @@ async def Trust_Node_Main(request):
 
 
 if __name__ == '__main__':
-    Trust_Node_Main('test_function-Trust_Node_Main')
+    Trust_Node_Main('test_function-Trust_Node_Main') 
+    
+    

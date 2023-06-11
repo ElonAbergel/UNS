@@ -10,6 +10,7 @@ djangorestframework = "*"
 flask = "*"
 aiohttp = "*"
 cryptography = "*"
+pycrypto = "*"
 
 [dev-packages]
 

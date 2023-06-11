@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "ea1262d27b797dec06c75081e3fa9900b5efed0aeadeb2fb659d3d5edcf5ac8a"
+            "sha256": "d8a81f0c1bc9b36116bbbc1b2f2442684838141b94971b0a36749a39760e60fc"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -611,6 +611,13 @@
             ],
             "version": "==2.21"
         },
+        "pycrypto": {
+            "hashes": [
+                "sha256:f2ce1e989b272cfcb677616763e0a2e7ec659effa67a88aa92b3a65528f60a3c"
+            ],
+            "index": "pypi",
+            "version": "==2.6.1"
+        },
         "pytz": {
             "hashes": [
                 "sha256:1d8ce29db189191fb55338ee6d0387d82ab59f3d00eac103412d64e0ebd0c588",
@@ -628,11 +635,11 @@
         },
         "werkzeug": {
             "hashes": [
-                "sha256:26c6a6a63a8a8d10a8d4e13e7f10821772ff5f138909262e89e946717c72b857",
-                "sha256:f6426f626540009131f06482c73f10c536efd47125afc63c850cc950db9ae585"
+                "sha256:935539fa1413afbb9195b24880778422ed620c0fc09670945185cce4d91a8890",
+                "sha256:98c774df2f91b05550078891dee5f0eb0cb797a522c757a2452b9cee5b202330"
             ],
             "markers": "python_version >= '3.8'",
-            "version": "==2.3.5"
+            "version": "==2.3.6"
         },
         "yarl": {
             "hashes": [
