@@ -10,7 +10,7 @@ from .models import User
 
 @csrf_exempt
 @async_to_sync
-async def Trust_Node_Main(request):
+async def TrustNodeWebsiteSybil(request):
     """
     1) interact with dealer so you can get the two private keys and public
     2)
@@ -49,7 +49,7 @@ async def Trust_Node_Main(request):
         return HttpResponse('Method not allowed', status=405)        
 
 
-if __name__ == '__main__':
-    Trust_Node_Main('test_function-Trust_Node_Main') 
+# if __name__ == '__main__':
+#     Trust_Node_Main('test_function-Trust_Node_Main') 
     
     

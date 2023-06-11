@@ -64,8 +64,8 @@ def Generate_Keys(request):
             
         # Send the keys to the trust nodes' APIs
 
-        user_trust_node_url = data.POST.get('TRUST_NODE_USER') + '/user_keys/'
-        website_trust_node_url = data.POST.get('TrustNode_Website') + '/website_keys/'            
+        user_trust_node_url = data.POST.get('TRUST_NODE_USER') + 'register/user_keys/'
+        website_trust_node_url = data.POST.get('TrustNode_Website') + '/register/website_keys/'            
         user_trust_node_response = requests.post(user_trust_node_url, json=trust_node_user_keys)
         if user_trust_node_response.status_code != 200:
             # Handle error if needed

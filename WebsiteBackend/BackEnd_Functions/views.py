@@ -9,9 +9,13 @@ import random
 from django.contrib.auth.hashers import make_password
 
 """
-What to do:
+What to do register:
 1) after keys are sent from dealer we need to get them and save them in trustnode and dealer node
 2) start the sign token fun between the trust node of website and trust node of user 
+3) check that all data is saved!/ handle errors
+
+what to do login:
+1) I am not quite sure about that 
 
 """
 
