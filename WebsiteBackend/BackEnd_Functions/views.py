@@ -24,11 +24,11 @@ DEALER = 'http://127.0.0.1:8060'
 TRUST_NODE_USER = 'http://127.0.0.1:8040'
 TrustNode_Website = 'http://127.0.0.1:8080'
 
-# Generate a random nonce of the specified length. 
-def generate_nonce(length=16):
-    chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
-    nonce = ''.join(random.choice(chars) for _ in range(length))
-    return nonce
+# # Generate a random nonce of the specified length. 
+# def generate_nonce(length=16):
+#     chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+#     nonce = ''.join(random.choice(chars) for _ in range(length))
+#     return nonce
 
 # This api request the trustnode of the user to start the Sybil Authentication
 @async_to_sync
@@ -73,6 +73,15 @@ async def register_user(request):
         password = data.get('password')
         passport = data.get('passport')
         trustNode = data.get('trustNode')
+        """
+        We can assume that the user singed with his private key send it  
+        to his Trust node and verified everything:
+         
+        option, to hard code private keys for user and 
+        have the public keys in the trust node
+        
+        """
+        # private_key_user = data.get('private_key_user')
         
         # Check if the user exists in the database with the given passport
         try:
@@ -91,26 +100,42 @@ async def register_user(request):
                 'website_name': 'Ywitter'
                 
                 
-
             }
             # request dealer to send keys to trust nodes
             if make_async_request_to_Dealer(payload_Dealer):
                 
+                """
+                We are just gonna skip to step 2:
+                UT generates a new token (T2), adds to it the same nonce N and a blinded version (PN') of the user's passport number (PN), and signs with its own private key. Note that PN' = E(PN, P).
+
+                Assume that all trust nodes, including UT and WT, know each other's public keys and can 
+                verify each other's signatures.  
+
+                UT sends T2 to WT. 
+                
+                WT extracts PN' and N.  
+                
+                WT completes the blinding of PN' to PN'' using the 
+                second key Q.
+                
+                WT provides N and PN'' to W.  Note that PN'' = E(PN', Q).
+                W now has a stable commitment of U's identity that will remain the 
+                same regardless of which trust node U chooses.  
+                    """
                 # We start the Sybil Authentication, sending trust node user Token T1            
                 payload_TrustNode_User = {
                     'Passport': passport,
                     'TrustNode_Website': TrustNode_Website,
-                    'Nonce_T1': generate_nonce(),
                     'website_name': 'Ywitter'
                 }
 
                 response = await make_async_request_to_User_TrustNode(payload_TrustNode_User)
-                if response['status'] == 'succeed to register User!': 
+                if response['message'] == 'succeed to register User!': 
                     
                     # Encrypt the password
                     hashed_password = make_password(password)
                     # Create a new user object || save the user data!
-                    user = User(name=str(name), email=str(email), password=str(hashed_password), passport=response['passport_w'], trustNode=trustNode)
+                    user = User(name=str(name), email=str(email), password=str(hashed_password), passport=response['blinded_passport'], trustNode=trustNode)
                     
                     # Save the user to the database
                     user.save()
