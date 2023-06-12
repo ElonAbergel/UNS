@@ -9,6 +9,7 @@ class Dealer(models.Model):
     Public_key_TrustNode_Website = models.IntegerField(max_length=500)
     Private_key_TrustNode_Website = models.IntegerField(max_length=500)
     Dealer_Key = models.IntegerField(max_length=500)
+    Website = models.CharField(max_length=500)
 
 
 

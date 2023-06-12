@@ -8,15 +8,19 @@ import random
 import requests
 import math
 
-
+@async_to_sync
 @csrf_exempt
-def Generate_Keys(request):
+async def Generate_Keys(request):
     """
     Here we need to check if the user passport already has a key and related stuff
     """
     if request.method == 'POST':
-        data = json.loads(request)
+        data = await json.loads(request)
+        
         passport_number = data.POST.get('passport_number') 
+        Website_Name = data.POST.get('website_name')
+        user_trust_node_url =  data.POST.get('TRUST_NODE_USER') + 'register/user_keys/'
+        website_trust_node_url = data.POST.get('TrustNode_Website') + '/register/website_keys/'   
 
         # Step 1: Choose a safe prime
         p = 3689348800710697289
@@ -47,25 +51,28 @@ def Generate_Keys(request):
                 Private_key_user=Private_key_u,
                 Public_key_TrustNode_Website=Private_key_v ,
                 Private_key_TrustNode_Website=public_key_v,
-                Dealer_Key=r
+                Dealer_Key=r,
+                Website = Website_Name,
             )
         dealer.save()
             
             
             # Prepare the keys to send to the trust nodes
         trust_node_user_keys = {
+                'website':dealer.Website,
+                'passport_number':dealer.Passport,
                 'public_key': dealer.Public_key_TrustNode_Website,
                 'private_key': dealer.Private_key_user
             }
         trust_node_website_keys = {
+                'website': dealer.Website,
+                'passport_number':dealer.Passport,
                 'public_key': dealer.Public_key_user,
                 'private_key': dealer.Private_key_TrustNode_Website
             }
             
         # Send the keys to the trust nodes' APIs
-
-        user_trust_node_url = data.POST.get('TRUST_NODE_USER') + 'register/user_keys/'
-        website_trust_node_url = data.POST.get('TrustNode_Website') + '/register/website_keys/'            
+         
         user_trust_node_response = requests.post(user_trust_node_url, json=trust_node_user_keys)
         if user_trust_node_response.status_code != 200:
             # Handle error if needed

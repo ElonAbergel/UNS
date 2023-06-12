@@ -10,43 +10,72 @@ from .models import User
 
 @csrf_exempt
 @async_to_sync
-async def TrustNodeWebsiteSybil(request):
+async def TrustNodeWebsiteSybil_keys(request):
     """
     1) interact with dealer so you can get the two private keys and public
     2)
     """
     if request.method == 'POST':
-        data = json.loads(request)
-        passport_number = data.POST.get('passport_number') 
-        print("I AM IN 6 IN VIEWS.PY")
+        data = await json.loads(request)
+        # we get the data from the api call
+        Passport = data.POST.get('passport_number')
+        Public_key_Trust_Node = data.POST.get('public_key')
+        Private_key_User = data.POST.get('private_key')
+        Website_Name = data.POST.get('website')
+
+        # we save the data
+        user = User.objects.create(
+                Passport = Passport,
+                Public_key_Trust_Node = Public_key_Trust_Node, 
+                Private_key_User = Private_key_User,
+                website_name = Website_Name,
+        )
+        user.save()
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+    #     data = json.loads(request)
+    #     passport_number = data.POST.get('passport_number') 
+    #     print("I AM IN 6 IN VIEWS.PY")
     
-        if User.objects.filter(Passport=passport_number).exists():
-            """Trust node already have this user infromation, start process without dealer"""
-            return HttpResponse('Method not allowed', status=405)
+    #     if User.objects.filter(Passport=passport_number).exists():
+    #         """Trust node already have this user infromation, start process without dealer"""
+    #         return HttpResponse('Method not allowed', status=405)
             
         
-        else:
-            """We need to create all keys for the trust node and the user """
-            payload = {
-                'passport': passport_number,
-                'message': "Dealer give me private key for me p and the public key for user trust node "
-            }
-            async with aiohttp.ClientSession() as session:
-                async with session.post('http://127.0.0.1:8060', json=payload) as response:
-                    if response.status == 200:
-                        response_data = await response.json()
+    #     else:
+    #         """We need to create all keys for the trust node and the user """
+    #         payload = {
+    #             'passport': passport_number,
+    #             'message': "Dealer give me private key for me p and the public key for user trust node "
+    #         }
+    #         async with aiohttp.ClientSession() as session:
+    #             async with session.post('http://127.0.0.1:8060', json=payload) as response:
+    #                 if response.status == 200:
+    #                     response_data = await response.json()
                         
-                        print(response_data)
-                    #     return JsonResponse(response_data)
-                    # else:
-                    #     print('Error: Trust node API request failed', status=500)
-                    #     return HttpResponse('Method not allowed', status=405)
-            response_data = {
-                'status': 'success'
-            }
-            return JsonResponse(response_data)
-    else:
-        return HttpResponse('Method not allowed', status=405)        
+    #                     print(response_data)
+    #                 #     return JsonResponse(response_data)
+    #                 # else:
+    #                 #     print('Error: Trust node API request failed', status=500)
+    #                 #     return HttpResponse('Method not allowed', status=405)
+    #         response_data = {
+    #             'status': 'success'
+    #         }
+    #         return JsonResponse(response_data)
+    # else:
+    #     return HttpResponse('Method not allowed', status=405)        
 
 
 # if __name__ == '__main__':

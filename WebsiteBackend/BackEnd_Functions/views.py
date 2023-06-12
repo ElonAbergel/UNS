@@ -20,7 +20,6 @@ what to do login:
 """
 
 
-
 DEALER = 'http://127.0.0.1:8060'
 TRUST_NODE_USER = 'http://127.0.0.1:8040'
 TrustNode_Website = 'http://127.0.0.1:8080'
@@ -35,7 +34,7 @@ def generate_nonce(length=16):
 @async_to_sync
 async def make_async_request_to_User_TrustNode(payload_TrustNode_User):
     async with aiohttp.ClientSession() as session:
-        async with session.post(TRUST_NODE_USER, json=payload_TrustNode_User) as response:
+        async with session.post(TRUST_NODE_USER + '/register/message_send', json=payload_TrustNode_User) as response:
             if response.status == 200:
                 response_data = await response.json()
                 response_data['status'] = 'succeed to register User'
@@ -89,6 +88,8 @@ async def register_user(request):
                 'message': "Dealer give me private keys and public keys for user trust node and website trust node ",
                 'TrustNode_Website': TrustNode_Website,
                 'TRUST_NODE_USER': TRUST_NODE_USER,
+                'website_name': 'Ywitter'
+                
                 
 
             }
@@ -105,11 +106,9 @@ async def register_user(request):
                 response = await make_async_request_to_User_TrustNode(payload_TrustNode_User)
                 if response['status'] == 'succeed to register User!': 
                     
-                    # we need to save the user data! 
-                    
                     # Encrypt the password
                     hashed_password = make_password(password)
-                    # Create a new user object
+                    # Create a new user object || save the user data!
                     user = User(name=name, email=email, password=hashed_password, passport=response['passport_w'], trustNode=trustNode)
                     
                     # Save the user to the database

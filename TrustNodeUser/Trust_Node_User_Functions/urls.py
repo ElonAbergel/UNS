@@ -4,6 +4,6 @@ from . import views
 
 
 urlpatterns = [
-    path('user_keys/',views.TrustNodeUserSybil,name='register')
+    path('user_keys/',views.TrustNodeUserSybil_keys,name='register')
     
 ]
