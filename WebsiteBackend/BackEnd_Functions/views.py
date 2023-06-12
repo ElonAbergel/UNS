@@ -10,7 +10,7 @@ from django.contrib.auth.hashers import make_password
 
 """
 What to do register:
-1) after keys are sent from dealer we need to get them and save them in trustnode and dealer node
+Done 1) after keys are sent from dealer we need to get them and save them in trustnode and dealer node
 2) start the sign token fun between the trust node of website and trust node of user 
 3) check that all data is saved!/ handle errors
 
@@ -100,7 +100,8 @@ async def register_user(request):
                 payload_TrustNode_User = {
                     'Passport': passport,
                     'TrustNode_Website': TrustNode_Website,
-                    'Nonce_T1': generate_nonce()
+                    'Nonce_T1': generate_nonce(),
+                    'website_name': 'Ywitter'
                 }
 
                 response = await make_async_request_to_User_TrustNode(payload_TrustNode_User)
@@ -109,7 +110,7 @@ async def register_user(request):
                     # Encrypt the password
                     hashed_password = make_password(password)
                     # Create a new user object || save the user data!
-                    user = User(name=name, email=email, password=hashed_password, passport=response['passport_w'], trustNode=trustNode)
+                    user = User(name=str(name), email=str(email), password=str(hashed_password), passport=response['passport_w'], trustNode=trustNode)
                     
                     # Save the user to the database
                     user.save()

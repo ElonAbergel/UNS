@@ -32,6 +32,12 @@ async def TrustNodeWebsiteSybil_keys(request):
         )
         user.save()
         
+    else:
+        return HttpResponse('Method not allowed', status=405)  
+    
+    
+async def TrustNodeWebsiteSybil_message(request):
+    return
         
         
         

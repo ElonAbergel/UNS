@@ -16,8 +16,8 @@ To experience the UNS demo, please visit XXX
 
 ## To start
 
-1. start fronend- npm run dev
-2. start WebsiteBackend for website- python manage.py runserver 8000
-3. start TrustNodeWebsite - python manage.py runserver 8080
-4. start TrustNodeUser - python manage.py runserver 8060
-5. start DealerNote - python manage.py runserver 8040
+1. cd fronend in terminal -> npm run dev
+2. cd WebsiteBackend in terminal -> python manage.py runserver 8000
+3. cd TrustNodeWebsite in terminal -> python manage.py runserver 8080
+4. cd TrustNodeUser in terminal -> python manage.py runserver 8060
+5. cd DealerNote in terminal -> python manage.py runserver 8040

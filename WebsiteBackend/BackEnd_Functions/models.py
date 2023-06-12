@@ -6,6 +6,6 @@ class User(models.Model):
     name = models.CharField
     email = models.CharField
     password = models.CharField 
-    passport = models.CharField
+    passport = models.IntegerField
     trustNode = models.CharField
     
