@@ -174,9 +174,6 @@ async def TrustNodeWebsiteSybil_message(request):
                 
                     
         
-
-                
-
                 
             except User.DoesNotExist:
                 return HttpResponse('Issue InvalidSignature ', status=410)
