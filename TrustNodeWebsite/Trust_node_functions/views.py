@@ -15,25 +15,7 @@ from cryptography.exceptions import InvalidSignature
 
 # Create your views here.
 
-async def Verifies(public_key_user,Nonce_T2):
-    public_key_bytes = public_key_user.encode('utf-8')
-    public_key_obj = serialization.load_pem_public_key(public_key_bytes, backend=default_backend())
-    signature = bytes.fromhex(Nonce_T2)
-    try:
-        public_key_obj.verify(
-            signature,
-            Nonce_T2.encode('utf-8'),
-            padding.PSS(
-                mgf=padding.MGF1(hashes.SHA256()),
-                salt_length=padding.PSS.MAX_LENGTH
-            ),
-            hashes.SHA256()
-        )
-        print("Signature is valid")
-        return True
-    except InvalidSignature:
-        print("Signature is invalid")
-        return False
+
 
     
     
@@ -49,16 +31,18 @@ async def TrustNodeWebsiteSybil_keys(request):
         data = await json.loads(request)
         # we get the data from the api call
         Passport = data.POST.get('passport_number')
-        Public_key_Trust_Node = data.POST.get('public_key')
-        Private_key_User = data.POST.get('private_key')
+        Public_key_user = data.POST.get('public_key_user')
+        Private_key_TrustNode = data.POST.get('private_key_trustnode')
         Website_Name = data.POST.get('website')
+        Public_key_Trust_Node = data.POST.get('public_key_trustnode_website')
 
         # we save the data
         user = User.objects.create(
                 Passport = Passport,
-                Public_key_Trust_Node = Public_key_Trust_Node, 
-                Private_key_User = Private_key_User,
+                Public_key_user = Public_key_user, 
+                Private_key_TrustNode = Private_key_TrustNode,
                 website_name = Website_Name,
+                Public_key_Trust_Node =Public_key_Trust_Node
         )
         user.save()
         
@@ -66,42 +50,83 @@ async def TrustNodeWebsiteSybil_keys(request):
         return HttpResponse('Method not allowed', status=405)  
     
 
-def blind_passport_number(passport, private_key):
+# async def Verifies(public_key_user, signature):
+    
+#     # Convert the signature from string to bytes
+#     signature_str = bytes.fromhex(signature)
+    
+#     try:
+#         # Verify the signature
+#         public_key_user.verify(
+#             bytes.fromhex(signature),
+#             b"verification_message",
+#             padding.PKCS1v15(),
+#             hashes.SHA256()
+#         )
+        
+        
+#         return True, "Signature is valid"
+#     except InvalidSignature:
+#         return False, "Signature is invalid"
 
 
-    # Convert the private key and public key from string format to bytes
-    private_key_bytes = private_key.encode('utf-8')
+# def decrypt_blinded_passport(encrypted_data_str, public_key_user):
+#     # Convert the encrypted data from string format to bytes
+#     encrypted_data = bytes.fromhex(encrypted_data_str)
 
+#     try:
+#         # Decrypt the encrypted data using the public_key_user
+#         decrypted_data = public_key_user.decrypt(
+#             encrypted_data,
+#             padding.OAEP(
+#                 mgf=padding.MGF1(algorithm=hashes.SHA256()),
+#                 algorithm=hashes.SHA256(),
+#                 label=None
+#             )
+#         )
 
-    # Load the private key and public key from the bytes representations
-    private_key_obj = serialization.load_pem_private_key(private_key_bytes, password=None, backend=default_backend())
+#         # Split the decrypted data into passport and private key
+#         PN_length = len(decrypted_data) // 2
+#         PN = decrypted_data[:PN_length].decode('utf-8')
+#         nonce_n = decrypted_data[PN_length:].decode('utf-8')
 
-    # Convert the passport number to bytes
+#         return PN, nonce_n
+#     except (ValueError, TypeError, InvalidSignature):
+#         # Handle decryption errors
+#         return None, None
+    
+
+def blind_passport_number(passport, private_key_trustnode_v):
+
+    # Convert the private key and passport from string format to bytes
+    private_key_bytes = private_key_trustnode_v.encode('utf-8')
     passport_bytes = passport.encode('utf-8')
 
-    # Blind the passport number using the public key
-    blinded_passport = private_key_obj.encrypt(
+    
+    # Encrypt the passport and private key with nonce_nm together using the private_key_user
+    encrypted_data = private_key_trustnode_v().encrypt(
         passport_bytes,
         padding.OAEP(
             mgf=padding.MGF1(algorithm=hashes.SHA256()),
             algorithm=hashes.SHA256(),
             label=None
-        )
+        ),
+        private_key_trustnode_v
     )
 
-    # Convert the blinded passport number to a string
-    blinded_passport_str = blinded_passport.hex()
+    # Convert the encrypted data to a string
+    encrypted_data_str = encrypted_data.hex()
 
-    return blinded_passport_str
+    return encrypted_data_str
+
 
 async def TrustNodeWebsiteSybil_message(request):
         if request.method == 'POST':
             data = await json.loads(request)
             # we get the data from the api call
             passport_number = data.POST.get('passport_number')
-            signature = data.POST.get('signature')
+            # signature = data.POST.get('signature')
             website_name = data.POST.get('website_name')
-            blinded_passport = data.POST.get('blinded_passport')
             TRUST_NODE_USER = data.POST.get('Trust_Node_User')
                 
             try:
@@ -110,49 +135,43 @@ async def TrustNodeWebsiteSybil_message(request):
                 user = User.objects.get(Q(Passport=passport_number) & Q(website_name=website_name))
                     
                 # Access the user's information and save it to variables
-                public_key_user = user.Public_key_user
-                private_key = user.Private_key_TrustNode
+            
+                private_key_trustnode_v = user.Private_key_TrustNode
                 
                 # We verify the public key 
-                if(Verifies(public_key_user,signature)):
+                # blinded_passport = Verifies(signature,blinded_passport_bytes)
                     
-                    PN_blinded = blind_passport_number(blinded_passport, private_key)
-                    # Convert the blinded passport number and nonce to bytes
-                    blinded_passport_bytes = PN_blinded.encode('utf-8')
-                     # Load the private key from the bytes representation
-                    private_key_obj = serialization.load_pem_private_key(private_key.encode('utf-8'), password=None,
-                                                                backend=default_backend())
+                # Read the public key from the PEM file or any other storage
+                # with open('public_key.pem', 'rb') as public_key_file:
+                #     public_key_pem = public_key_file.read()
 
-                    # Sign the token data using the private key
-                    signature = private_key_obj.sign(
-                        blinded_passport_bytes,
-                        padding.PSS(
-                            mgf=padding.MGF1(hashes.SHA256()),
-                            salt_length=padding.PSS.MAX_LENGTH
-                        ),
-                        hashes.SHA256()
-                    )
+                # # Parse the public key from PEM format
+                # public_key_user = serialization.load_pem_public_key(
+                #     public_key_pem,
+                #     backend=default_backend()
+                # )
+                
+                # encrypted_message = public_key_user,data.POST.get('decrypt_message')
+                # # we need to decrypt the message so we can blind it with second key
+                # PN, nonce_n =  decrypt_blinded_passport(encrypted_message,public_key_user)
+                PN_1_2 = data.POST.get('PN')
+                N_Nonce = data.POST.get('N_Noce')
+                PN_blinded = blind_passport_number(PN_1_2, private_key_trustnode_v)
 
-                    # Convert the signature to a string
-                    signature_str = signature.hex()
-                    
-                                # Prepare the data to be sent to the Trust_Node_Website API
+                
+                            # Prepare the data to be sent to the website N nd PN'' 
 
-                    response_data = {
-                    'message': 'Succeed to register User!',
-                    'passport_number': passport_number,
-                    'signature': signature_str,
-                    'blinded_passport': PN_blinded,
-                    'website_name': website_name
+                response_data = {
+                'message': 'Succeed to register User!',
+                'passport_number': passport_number,
+                'blinded_passport': PN_blinded,
+                'N_Nonce': N_Nonce,
+                'website_name': website_name,
 }
-                
-                    return JsonResponse(response_data)
+            
+                return JsonResponse(response_data)
 
                 
-                
-                else:
-                    return HttpResponse('Issue InvalidSignature ', status=411)
-                    
                     
         
 

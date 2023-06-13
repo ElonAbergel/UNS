@@ -23,10 +23,14 @@ async def Generate_Keys(request):
         website_trust_node_url = data.POST.get('TrustNode_Website') + '/register/website_keys/'   
 
         # Step 1: Choose a safe prime
-        p = 3689348800710697289
+        p = 2 ** 512 - 159037
         
         # Step 2: Choose r and u from Z(φ(p))
+        # calculate the value of Euler's totient function (phi function) of p, denoted as φ(p).
         phi_p = p - 1
+        
+        #choosing a random value r from the set Z(φ(p)), 
+        # which means r should be a positive integer less than φ(p) and relatively prime to p
         r = random.randint(2, phi_p - 1)
         
         # Choose a random value for Private_key_u and ensure it is coprime with phi_p
@@ -38,7 +42,7 @@ async def Generate_Keys(request):
         # Step 3: Calculate v = r * u^(-1) mod φ(p)
         Private_key_v = (r * inverse(Private_key_u, phi_p)) % phi_p
         
-        # step 4: Calculate public keys for P and Q:
+        # step 4: Calculate public keys for P and Q, not really needed I think
         public_key_u = pow(2, Private_key_u, p)
         public_key_v = pow(2, Private_key_v, p)
         
@@ -60,29 +64,30 @@ async def Generate_Keys(request):
             # Prepare the keys to send to the trust nodes
         trust_node_user_keys = {
                 'website':dealer.Website,
-                'passport_number':dealer.Passport,
-                'public_key': dealer.Public_key_TrustNode_Website,
-                'private_key': dealer.Private_key_user
+                'passport_number':dealer.Passport, 
+                'public_key_user': dealer.Public_key_user,
+                'private_key_user': dealer.Private_key_user,
+                'public_key_trustnode_website': dealer.Public_key_TrustNode_Website,
             }
         trust_node_website_keys = {
                 'website': dealer.Website,
                 'passport_number':dealer.Passport,
-                'public_key': dealer.Public_key_user,
-                'private_key': dealer.Private_key_TrustNode_Website
+                'public_key_user': dealer.Public_key_user,
+                'public_key_trustnode_website': dealer.Public_key_TrustNode_Website,
+                'private_key_trustnode': dealer.Private_key_TrustNode_Website
             }
             
         # Send the keys to the trust nodes' APIs
          
         user_trust_node_response = requests.post(user_trust_node_url, json=trust_node_user_keys)
         if user_trust_node_response.status_code != 200:
-            # Handle error if needed
-            pass
+            return HttpResponse('Eroor in sending to User keys', status=415)   
+            
 
         # Send the website trust node keys
         website_trust_node_response = requests.post(website_trust_node_url, json=trust_node_website_keys)
         if website_trust_node_response.status_code != 200:
-            # Handle error if needed
-            pass
+            return HttpResponse('Eroor in sending to User keys', status=415)  
         
         return JsonResponse({'message': "All keys are good to go!"})
 

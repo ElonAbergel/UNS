@@ -4,6 +4,7 @@ from django.db import models
 class User(models.Model):
     Passport = models.IntegerField
     Public_key_Trust_Node = models.IntegerField
-    Private_key_User = models.IntegerField
+    private_key_Dealer_u = models.IntegerField
     website_name = models.CharField(max_length=500)
+    Public_key_User= models.IntegerField
     

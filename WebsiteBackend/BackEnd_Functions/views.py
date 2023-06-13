@@ -19,16 +19,22 @@ what to do login:
 
 """
 
+"""IDEAS
+We can pass the user private key, just to show prove of signing douments
+we can assume that all data is been signed and approved
+"""
+
 
 DEALER = 'http://127.0.0.1:8060'
 TRUST_NODE_USER = 'http://127.0.0.1:8040'
-TrustNode_Website = 'http://127.0.0.1:8080'
+TrustNode_URL = 'http://127.0.0.1:8080'
 
 # # Generate a random nonce of the specified length. 
 # def generate_nonce(length=16):
 #     chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
 #     nonce = ''.join(random.choice(chars) for _ in range(length))
 #     return nonce
+
 
 # This api request the trustnode of the user to start the Sybil Authentication
 @async_to_sync
@@ -94,8 +100,8 @@ async def register_user(request):
             
             payload_Dealer = { # Construct the request payload
                 'passport': passport,
-                'message': "Dealer give me private keys and public keys for user trust node and website trust node ",
-                'TrustNode_Website': TrustNode_Website,
+                'message': "Dealer give me private keys(v and u) for user trust node and website trust node ",
+                'TrustNode_Website': TrustNode_URL,
                 'TRUST_NODE_USER': TRUST_NODE_USER,
                 'website_name': 'Ywitter'
                 
@@ -125,7 +131,7 @@ async def register_user(request):
                 # We start the Sybil Authentication, sending trust node user Token T1            
                 payload_TrustNode_User = {
                     'Passport': passport,
-                    'TrustNode_Website': TrustNode_Website,
+                    'TrustNode_URL': TrustNode_URL,
                     'website_name': 'Ywitter'
                 }
 
